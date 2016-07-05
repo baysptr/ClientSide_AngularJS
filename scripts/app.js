@@ -9,7 +9,11 @@ angular
             'ui.router',
             'ngAnimate',
             'ngResource'
-        ])
+        ],
+        function($interpolateProvider) {
+            $interpolateProvider.startSymbol('{{');
+            $interpolateProvider.endSymbol('}}');
+        })
         .config(['$urlRouterProvider', '$stateProvider', function ($urlRouterProvider, $stateProvider) {
             $urlRouterProvider.otherwise('/');
             $stateProvider

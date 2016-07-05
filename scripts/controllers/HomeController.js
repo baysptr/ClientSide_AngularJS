@@ -5,12 +5,39 @@
  * and open the template in the editor.
  */
 angular.module('FrontEnd')
-        .controller('HomeController', function ($scope, $window, HomeService) {
+        .controller('HomeController', function ($scope, $http, HomeService) {
             $scope.title = 'Tambah Siswa';
             $scope.dataSiswa = [];
+            $scope.lastPage = 1;
+
+            $scope.init = function () {
+                $scope.lastpage = 1;
+                $http({
+                    url: 'http://localhost:8000/siswa',
+                    method: "GET",
+                    params: {page: $scope.lastpage}
+                }).success(function (data, status, headers, config) {
+                    $scope.dataSiswa = data.data;
+                    $scope.currentpage = data.current_page;
+                });
+            };
+            
+            $scope.loadMore = function() {
+                $scope.lastpage +=1;
+                $http({
+                    url: 'http://localhost:8000/siswa',
+                    method: "GET",
+                    params: {page:  $scope.lastpage}
+                }).success(function (data, status, headers, config) {
+ $scope.dataSiswa = data.data;
+                });
+            };
+
+            $scope.init();
+
             $scope.reload = function () {
                 HomeService.ambil().success(function (data) {
-                    $scope.dataSiswa = data;
+                    $scope.init();
                     console.log('siswa Work');
                 });
             };
@@ -25,16 +52,16 @@ angular.module('FrontEnd')
                 if ($scope.Siswa === undefined) {
                     swal("Oops...", "Data Belum Terisi", "error");
                 } else {
-                    if($scope.Siswa.id === null || $scope.Siswa.id === undefined){
+                    if ($scope.Siswa.id === null || $scope.Siswa.id === undefined) {
                         HomeService.simpan($scope.Siswa, null).success(function (data) {
-                        console.log('success');
-                        $scope.clear();
-                    });
-                    }else{
+                            console.log('success');
+                            $scope.clear();
+                        });
+                    } else {
                         HomeService.simpan($scope.Siswa, $scope.Siswa).success(function (data) {
-                        console.log('success');
-                        $scope.clear();
-                    });
+                            console.log('success');
+                            $scope.clear();
+                        });
 //console.log($scope.Siswa.id + '' + $scope.Siswa);
                     }
                 }
