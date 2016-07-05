@@ -25,8 +25,8 @@ angular.module('FrontEnd')
                 if ($scope.Siswa === undefined) {
                     swal("Oops...", "Data Belum Terisi", "error");
                 } else {
-                    if($scope.Siswa.id === ""){
-                        HomeService.simpan($scope.Siswa).success(function (data) {
+                    if($scope.Siswa.id === null || $scope.Siswa.id === undefined){
+                        HomeService.simpan($scope.Siswa, null).success(function (data) {
                         console.log('success');
                         $scope.clear();
                     });
