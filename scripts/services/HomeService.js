@@ -16,8 +16,12 @@ angular.module('FrontEnd')
 //console.log(obj);
                     }
                 },
-                ambil: function () {
-                    return $http.get(url);
+                ambil: function (objSearch, pgNumber) {
+                    if(objSearch === undefined || objSearch === null){
+                        return $http.get(url+'?page='+pgNumber);
+                    }else{
+                        return $http.get(url+'?search='+objSearch+'&page='+pgNumber);
+                    }
                 },
                 hapus: function (obj) {
                     return $http.delete(url + '/' + obj);

@@ -8,36 +8,32 @@ angular.module('FrontEnd')
         .controller('HomeController', function ($scope, $http, HomeService) {
             $scope.title = 'Tambah Siswa';
             $scope.dataSiswa = [];
-            $scope.lastPage = 1;
+            $scope.totalPage = 1;
+            $scope.currentPage = 0;
+            $scope.range = [];
 
-            $scope.init = function () {
-                $scope.lastpage = 1;
-                $http({
-                    url: 'http://localhost:8000/siswa',
-                    method: "GET",
-                    params: {page: $scope.lastpage}
-                }).success(function (data, status, headers, config) {
-                    $scope.dataSiswa = data.data;
-                    $scope.currentpage = data.current_page;
-                });
+            $scope.getSiswa = function (txtSearch, pageNumber) {
+                txtSearch = $scope.txtSearch;
+                if (pageNumber === undefined) {
+                    pageNumber = '1';
+                }
+              HomeService.ambil(txtSearch, pageNumber).success(function (data){
+                  $scope.dataSiswa = data.data;
+                  $scope.totalPage = data.last_page;
+                  $scope.currentPage = data.current_page;
+                  
+                  var pages = [];
+                  
+                  for (var i = 1;i<=data.last_page;i++){
+                      pages.push(i);
+                  }
+                  $scope.range = pages;
+              });  
             };
-            
-            $scope.loadMore = function() {
-                $scope.lastpage +=1;
-                $http({
-                    url: 'http://localhost:8000/siswa',
-                    method: "GET",
-                    params: {page:  $scope.lastpage}
-                }).success(function (data, status, headers, config) {
- $scope.dataSiswa = data.data;
-                });
-            };
-
-            $scope.init();
 
             $scope.reload = function () {
                 HomeService.ambil().success(function (data) {
-                    $scope.init();
+                    $scope.getSiswa();
                     console.log('siswa Work');
                 });
             };
